@@ -14,8 +14,13 @@ contract('Quinn', (accounts) => {
         );
         assert.equal(
             await tokenInstance.symbol(),
-            'QN',
+            'QNN',
             'has the correct symbol'
+        );
+        assert.equal(
+            await tokenInstance.standard(),
+            'QNN v1.0',
+            'has the correct standard'
         )
     })
 
