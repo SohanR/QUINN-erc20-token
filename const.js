@@ -1,0 +1,1 @@
+module.exports.TOTAL_SUPPLY = 1000000 
