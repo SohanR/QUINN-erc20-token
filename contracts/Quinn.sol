@@ -11,7 +11,15 @@ contract Quinn {
     // transfer event
     event Transfer(address indexed _from, address indexed _to, uint256 _value);
 
+    // approve event
+    event Approval(
+        address indexed _owner,
+        address indexed _spender,
+        uint256 _value
+    );
+
     mapping(address => uint256) public balanceOf;
+    mapping(address => mapping(address => uint256)) public allowance;
 
     constructor(uint256 _initialSupply) {
         totalSupply = _initialSupply; // 1 million
@@ -33,6 +41,21 @@ contract Quinn {
 
         // trigger the transfer event
         emit Transfer(msg.sender, _to, _value);
+
+        return true;
+    }
+
+    //delegated transfer
+
+    // approve transfer
+    function approve(
+        address _spender,
+        uint256 _value
+    ) public returns (bool success) {
+        // allowance
+        allowance[msg.sender][_spender] = _value;
+        // approve event
+        emit Approval(msg.sender, _spender, _value);
 
         return true;
     }
