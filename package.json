@@ -1,0 +1,25 @@
+{
+  "name": "quinn-erc20-token",
+  "version": "1.0.0",
+  "description": "quinn erc20 token, a cryptocurrency coin",
+  "main": "const.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/SohanR/QUINN-erc20-token.git"
+  },
+  "author": "sohanR",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/SohanR/QUINN-erc20-token/issues"
+  },
+  "homepage": "https://github.com/SohanR/QUINN-erc20-token#readme",
+  "dependencies": {
+    "mocha-logger": "^1.0.8"
+  }
+}
