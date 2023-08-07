@@ -109,5 +109,53 @@ contract('Quinn', (accounts) => {
             'deducts the amount from the sending account'
           );
     });
+
+    it('approve tokens for delegate transfer',async () => {
+        const APPROVE_AMOUNT = 100;
+
+        tokenInstance = await Quinn.deployed(); 
+
+        let result = await tokenInstance.approve.call(
+            accounts[0],
+            APPROVE_AMOUNT
+        );
+
+        assert.equal(result, true, 'it returns true');
+
+        let receipt = await tokenInstance.approve(accounts[1], APPROVE_AMOUNT, {from: accounts[0]});
+
+
+        assert.equal(receipt.logs.length, 1, 'triggers one event');
+
+        assert.equal(receipt.logs[0].event, 'Approval', 'should be approval event');
+
+        assert.equal(
+            receipt.logs[0].args._owner,
+            accounts[0],
+            'logs the account the tokens are transferred from'
+          );
+
+          assert.equal(
+            receipt.logs[0].args._spender,
+            accounts[1],
+            'logs the account the tokens are transferred to'
+          );
+
+          assert.equal(
+            receipt.logs[0].args._value,
+            APPROVE_AMOUNT,
+            'logs the transfer amount'
+          );
+
+          let allowance = await tokenInstance.allowance(accounts[0],accounts[1]);
+
+          assert.equal(
+            allowance.toNumber(),
+            APPROVE_AMOUNT,
+            'stores the allowance for delegate transfer'
+          );
+
+    });
+    
     
 })
