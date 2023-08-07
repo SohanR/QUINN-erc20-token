@@ -1,6 +1,7 @@
 
 const Quinn = artifacts.require('Quinn');
 const common = require('../const')
+const mlog = require('mocha-logger');
 
 contract('Quinn', (accounts) => {
     let tokenInstance;
@@ -43,4 +44,70 @@ contract('Quinn', (accounts) => {
         )
        
     })
+
+    it('transfer coin ownership',async () => {
+        tokenInstance = await Quinn.deployed();
+
+        try {
+            // call() inspect, dont create any transactions
+            await tokenInstance.transfer.call(accounts[1], 9999999999);
+            assert(false)
+        } catch (error) {
+            mlog.log('\n' + error.message)
+            assert(
+                error.message.indexOf('revert') >=0 ,
+                'error message must contain revert' 
+            )
+        }
+
+        const DEDUCTS_AMOUNT = 250000;
+
+        let returnValue = await tokenInstance.transfer.call(
+            accounts[1],
+            DEDUCTS_AMOUNT,
+            {
+                from:accounts[0]
+            }
+        )
+
+        assert.equal(returnValue, true, 'it returns true');
+
+        let receipt = await tokenInstance.transfer(accounts[1],DEDUCTS_AMOUNT,{from:accounts[0]});
+
+        assert.equal(receipt.logs.length, 1, 'triggers one event');
+
+        assert.equal(receipt.logs[0].event, 'Transfer', 'should be transfer event');
+
+        assert.equal(
+            receipt.logs[0].args._from,
+            accounts[0],
+            'logs the account the tokens are transferred from'
+          );
+
+          assert.equal(
+            receipt.logs[0].args._to,
+            accounts[1],
+            'logs the account the tokens are transferred to'
+          );
+
+          assert.equal(
+            receipt.logs[0].args._value,
+            DEDUCTS_AMOUNT,
+            'logs the transfer amount'
+          );
+
+          let balance1AfterTransfer = await tokenInstance.balanceOf(accounts[1]);
+          assert.equal(
+            balance1AfterTransfer.toNumber(),
+            DEDUCTS_AMOUNT,
+            'adds the amount to the receiving account'
+          );
+          let balance0AfterTransfer = await tokenInstance.balanceOf(accounts[0]);
+          assert.equal(
+            balance0AfterTransfer.toNumber(),
+            common.TOTAL_SUPPLY - DEDUCTS_AMOUNT,
+            'deducts the amount from the sending account'
+          );
+    });
+    
 })
