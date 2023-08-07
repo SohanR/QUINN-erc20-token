@@ -59,4 +59,31 @@ contract Quinn {
 
         return true;
     }
+
+    // transfer from
+    function transferFrom(
+        address _from,
+        address _to,
+        uint256 _value
+    ) public returns (bool success) {
+        // require _from has enough tokens
+        require(_value <= balanceOf[_from]);
+
+        // require  allowance is big enough
+        require(_value <= allowance[_from][msg.sender]);
+
+        // transfer event
+        emit Transfer(_from, _to, _value);
+
+        // change the balanceOf address
+        balanceOf[_from] -= _value;
+
+        // update the balanceOf address
+        balanceOf[_to] += _value;
+
+        // update the allowance of address
+        allowance[_from][msg.sender] -= _value;
+
+        return true;
+    }
 }
