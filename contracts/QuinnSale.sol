@@ -4,19 +4,16 @@ pragma solidity ^0.8.19;
 import "./Quinn.sol";
 
 contract QuinnSale {
+    // DO NOT expose the address of admin
     address admin;
     Quinn public tokenContract;
     uint256 public tokenPrice;
     uint256 public tokensSold;
 
-    //sell event
     event Sell(address _buyer, uint256 _amount);
 
-    //token contract
-    //token price
-
     constructor(Quinn _tokenContract, uint256 _tokenPrice) {
-        //assign an admin
+        // Assign an admin
         admin = msg.sender;
         tokenContract = _tokenContract;
         tokenPrice = _tokenPrice;
@@ -29,17 +26,18 @@ contract QuinnSale {
         require(y == 0 || (z = x * y) / y == x);
     }
 
-    // buy coins
+    // Buy tokens
     function buyTokens(uint256 _numberOfTokens) public payable {
-        //require that value is equal to coin
+        // require that value is equal to tokens
         require(msg.value == multiply(_numberOfTokens, tokenPrice));
-        //require that contract has enough coin
+        // require that the contract has enough tokens
         require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
-        // require that  transfer is successful
+        // msg.sender here is the buyer
+        // in transfer function, msg.sender is QuinnSale contract
         require(tokenContract.transfer(msg.sender, _numberOfTokens));
-        //keep track number of coin sold
+
         tokensSold += _numberOfTokens;
-        // trigger sell event
+
         emit Sell(msg.sender, _numberOfTokens);
     }
 }
