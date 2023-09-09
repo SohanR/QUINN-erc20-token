@@ -5,12 +5,12 @@ import "./Quinn.sol";
 
 contract QuinnSale {
     // DO NOT expose the address of admin
-    address admin;
+    address public admin;
     Quinn public tokenContract;
     uint256 public tokenPrice;
     uint256 public tokensSold;
 
-    event Sell(address _buyer, uint256 _amount);
+    event Sell(address indexed _buyer, uint256 _amount);
 
     constructor(Quinn _tokenContract, uint256 _tokenPrice) {
         // Assign an admin
@@ -29,15 +29,29 @@ contract QuinnSale {
     // Buy tokens
     function buyTokens(uint256 _numberOfTokens) public payable {
         // require that value is equal to tokens
-        require(msg.value == multiply(_numberOfTokens, tokenPrice));
+        require(
+            msg.value == _numberOfTokens * tokenPrice,
+            "value is not equal to tokens"
+        );
         // require that the contract has enough tokens
-        require(tokenContract.balanceOf(address(this)) >= _numberOfTokens);
+        require(
+            tokenContract.balanceOf(admin) >= _numberOfTokens,
+            "balance is not equal to"
+        );
         // msg.sender here is the buyer
         // in transfer function, msg.sender is QuinnSale contract
-        require(tokenContract.transfer(msg.sender, _numberOfTokens));
+        require(
+            tokenContract.transfer(msg.sender, _numberOfTokens),
+            "transfer issue"
+        );
 
         tokensSold += _numberOfTokens;
 
         emit Sell(msg.sender, _numberOfTokens);
+    }
+
+    function withdrawEther(address _recipient) public {
+        require(msg.sender == admin, "Only owner can withdraw");
+        payable(_recipient).transfer(address(this).balance);
     }
 }
