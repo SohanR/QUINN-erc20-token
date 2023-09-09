@@ -34,7 +34,7 @@ contract Quinn {
         address _to,
         uint256 _value
     ) public returns (bool success) {
-        require(balanceOf[msg.sender] >= _value);
+        //require(balanceOf[msg.sender] >= _value, "balance error");
 
         balanceOf[msg.sender] -= _value;
         balanceOf[_to] += _value;
